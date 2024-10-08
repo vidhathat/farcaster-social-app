@@ -5,8 +5,8 @@ import { AuthKitProvider } from '@farcaster/auth-kit';
 
 const config = {
   rpcUrl: 'https://mainnet.optimism.io',
-  domain: 'example.com',
-  siweUri: 'https://example.com/login',
+  domain: 'sixpence.xyz',
+  siweUri: 'https://sixpence.xyz/login',
 };
 
 function App({ Component, pageProps }: AppProps) {
