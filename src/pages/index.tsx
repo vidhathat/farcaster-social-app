@@ -2,31 +2,51 @@ import Head from "next/head";
 import { SignInButton, UseSignInData } from "@farcaster/auth-kit";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function Home() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleLogin = async (profile: UseSignInData) => {
     try {
+      console.log(profile)
       if (profile?.fid) {
-        localStorage.setItem('profile', JSON.stringify(profile))
+        const userProfile = {
+          fid: profile.fid,
+          username: profile.username,
+          photoUrl: profile.pfpUrl,
+          address: profile.verifications?.[0] || null
+        };
+
+        // Insert or update user profile in Supabase
+        const { data, error } = await supabase
+          .from('users')
+          .upsert(userProfile, { onConflict: 'fid' })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Store only the fid in localStorage for quick checks
+        localStorage.setItem('fid', profile.fid.toString());
+        
         router.push("/feed");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error saving user profile:", error);
     }
   }
 
   useEffect(() => {
-    const profile = localStorage.getItem('profile')
-    if (profile) {
-      const parsedProfile = JSON.parse(profile);
-      if (parsedProfile?.fid) {
-        router.push("/feed");
-      }
+    const fid = localStorage.getItem('fid');
+    if (fid) {
+      router.push("/feed");
+    } else {
+      console.log("No fid found")
     }
-  }, [])
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">

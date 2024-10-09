@@ -1,128 +1,42 @@
-import styled from 'styled-components';
+import React from 'react'
+import Image from 'next/image'
+import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/solid'
 
-
-export default function FeedItem() {
+const FeedItem = ({ post }) => {
   return (
-    <FeedItemWrapper>
-      <UserInfo>
-        <Avatar src="/user.png" alt="User avatar" />
-        <div>
-          <UserName>Dan @dwr</UserName>
-          <TimeStamp>3hr</TimeStamp>
+    <div className="bg-[#1B1F24]  shadow-md rounded-lg p-4 mb-4">
+      <div className="flex items-center mb-2">
+        <Image
+          src={post.profilePicUrl || '/user.png'}
+          alt={post.username || 'User'}
+          width={40}
+          height={40}
+          className="rounded-full mr-2"
+        />
+        <span className="font-semibold text-gray-800 dark:text-white">{post.username || 'Anonymous'}</span>
+      </div>
+      <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{post.location}</h2>
+      {post.photo_url && (
+        <div className="relative w-full h-48 mb-2">
+          <Image src={post.photo_url} alt={post.location} layout="fill" objectFit="cover" className="rounded" />
         </div>
-      </UserInfo>
-      <Content>Bought tickets to Ed Sheeran's concert on bookmyshow.</Content>
-      <PostImage src="/concert.png" alt="Concert" />
-      <Location>📍 Location Map Link</Location>
-      <Actions>
-        <ActionButton aria-label="Upvote">
-          <UpvoteIcon viewBox="0 0 24 24">
-            <path d="M12 4l-8 8h6v8h4v-8h6z" />
-          </UpvoteIcon>
-        </ActionButton>
-        <ActionButton aria-label="Downvote">
-          <DownvoteIcon viewBox="0 0 24 24">
-            <path d="M12 20l-8-8h6V4h4v8h6z" />
-          </DownvoteIcon>
-        </ActionButton>
-        <ShareButton>Share</ShareButton>
-      </Actions>
-    </FeedItemWrapper>
+      )}
+      <p className="text-gray-600 dark:text-gray-300 mb-4">{post.description}</p>
+      <div className="flex justify-between items-center">
+        <div className="flex space-x-4">
+          <button className="flex items-center text-gray-500 hover:text-green-500">
+            <ArrowUpIcon className="h-5 w-5 mr-1" />
+            <span>{post.upvotes || 0}</span>
+          </button>
+          <button className="flex items-center text-gray-500 hover:text-red-500">
+            <ArrowDownIcon className="h-5 w-5 mr-1" />
+            <span>{post.downvotes || 0}</span>
+          </button>
+        </div>
+        <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
+      </div>
+    </div>
   )
 }
 
-const FeedItemWrapper = styled.div`
-  background-color: #1B1F24;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  padding: 16px;
-  margin-bottom: 16px;
-`;
-
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-`;
-
-const Avatar = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 12px;
-`;
-
-const UserName = styled.span`
-  font-weight: bold;
-  margin-right: 8px;
-`;
-
-const TimeStamp = styled.span`
-  color: #657786;
-  font-size: 0.9em;
-`;
-
-const Content = styled.p`
-  margin-bottom: 12px;
-`;
-
-const PostImage = styled.img`
-  max-width: 100%;
-  border-radius: 8px;
-  margin-bottom: 12px;
-`;
-
-const Location = styled.p`
-  color: #1DA1F2;
-  margin-bottom: 12px;
-`;
-
-const Actions = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  gap: 16px;
-`;
-
-const ActionButton = styled.button`
-  background-color: transparent;
-  border: none;
-  color: #657786;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0;
-  transition: opacity 0.2s;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-const IconSvg = styled.svg`
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
-  stroke: white;
-  stroke-width: 1px;
-`;
-
-const UpvoteIcon = styled(IconSvg)`
-  color: #4CAF50;
-`;
-
-const DownvoteIcon = styled(IconSvg)`
-  color: #F44336;
-`;
-
-const ShareButton = styled(ActionButton)`
-  color: #657786;
-  padding: 8px 12px;
-  border-radius: 16px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: rgba(29, 161, 242, 0.1);
-    opacity: 1;
-  }
-`;
+export default FeedItem
