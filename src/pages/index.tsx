@@ -7,7 +7,6 @@ import { supabase } from "../lib/supabase";
 
 export default function Home() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
 
   const handleLogin = async (profile: UseSignInData) => {
     try {
@@ -31,7 +30,8 @@ export default function Home() {
 
         // Store only the fid in localStorage for quick checks
         localStorage.setItem('fid', profile.fid.toString());
-        
+        // set all userprofile in localStorage
+        localStorage.setItem('userProfile', JSON.stringify(userProfile));
         router.push("/feed");
       }
     } catch (error) {
