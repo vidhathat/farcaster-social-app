@@ -7,6 +7,10 @@ import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAccount, useConnect, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { injected } from 'wagmi/connectors';
+import { contractAddress, contractABI } from "../lib/contract";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 // Define a type for our posts
 type Post = {
@@ -35,6 +39,11 @@ export default function Feed() {
   const [isSliderOpen, setIsSliderOpen] = useState(false)
   const [posts, setPosts] = useState<Post[]>([])
   const [user, setUser] = useState<User | null>(null)
+
+  const { address, isConnected } = useAccount();
+  const { connectAsync } = useConnect();
+  const { writeContractAsync: addLocation } = useWriteContract();
+  const { openConnectModal } = useConnectModal();
 
   useEffect(() => {
     const fid = localStorage.getItem('fid')
@@ -67,6 +76,36 @@ export default function Feed() {
     setIsSliderOpen(true)
   }
 
+  const handleAddLocation = async (location: string, description: string, photoUrl: string, username: string, profilePicUrl: string, fid: number) => {
+    try {
+      if(!isConnected) {
+        const connection = await connectAsync({ connector: injected(), chainId: 84532 })
+        console.log(connection.accounts[0])
+        if (!connection.accounts[0]) {
+          return false
+        }
+      }
+      const tx = await addLocation({
+        abi: contractABI,
+        address: contractAddress,
+        functionName: 'addLocation',
+        args: [
+            location,
+            description,
+            fid,
+            photoUrl,
+            username,
+            profilePicUrl
+        ]
+      })
+      console.log("TRANSACTION HASH", tx)
+      return true
+    } catch (error) {
+      console.error('Error adding location:', error)
+      return false
+    }
+  }
+
   const handlePost = async (location: string, description: string, photoUrl: string) => {
     const fid = profile?.fid || Number(localStorage.getItem('fid'))
     if (!fid) {
@@ -84,6 +123,12 @@ export default function Feed() {
 
       if (userError) {
         throw userError
+      }
+
+      const success = await handleAddLocation(location, description, photoUrl, userData.username, userData.photoUrl, fid)
+      if (!success) {
+        toast.error('Error with transaction')
+        return
       }
 
       const { data, error } = await supabase
