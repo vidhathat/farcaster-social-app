@@ -31,6 +31,7 @@ export default function Home() {
 
         // Store only the fid in localStorage for quick checks
         localStorage.setItem('fid', profile.fid.toString());
+        localStorage.setItem('user', JSON.stringify(userProfile));
         
         router.push("/feed");
       }

@@ -22,15 +22,27 @@ type Post = {
   profilePicUrl: string
 }
 
+type User = {
+  fid: number
+  username: string
+  photoUrl: string
+  address?: string | null
+}
+
 export default function Feed() {
   const router = useRouter()
   const { profile } = useProfile()
   const [isSliderOpen, setIsSliderOpen] = useState(false)
   const [posts, setPosts] = useState<Post[]>([])
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const fid = localStorage.getItem('fid')
     if (fid) {
+      const user = localStorage.getItem('user')
+      if (user) {
+        setUser(JSON.parse(user))
+      }
       fetchPosts(Number(fid))
     } else {
       router.push('/')
@@ -109,7 +121,7 @@ export default function Feed() {
         <div className="bg-[#181A1D] p-4 h-screen sm:h-[calc(100vh-2rem)] flex flex-col">
           <div className='flex justify-between items-center mb-4'>
             <img src="/logo.png" alt="SIXPENCE" className="w-28 h-6" />
-            <img src={profile?.pfpUrl || '/profile.png'} alt="Profile" className="w-8 h-8 rounded-full" />
+            <img src={profile?.pfpUrl ? profile?.pfpUrl : user?.photoUrl ? user.photoUrl : '/profile.png'} alt="Profile" className="w-8 h-8 rounded-full" />
           </div>
           <div className='flex-grow overflow-y-auto'>
             <div className='flex flex-col gap-4'>
