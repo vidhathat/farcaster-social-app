@@ -27,7 +27,7 @@ export default function Profile() {
   const [userPosts, setUserPosts] = useState<Post[]>([])
 
   useEffect(() => {
-    const storedProfile = localStorage.getItem('userProfile')
+    const storedProfile = localStorage.getItem('user')
     if (storedProfile) {
       const parsedProfile = JSON.parse(storedProfile)
       setUserProfile(parsedProfile)
