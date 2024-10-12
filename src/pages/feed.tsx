@@ -255,8 +255,8 @@ export default function Feed() {
           const { error: updateError } = await supabase
             .from('votes')
             .update({ 
-              upvote: voteType === 'upvote', 
-              downvote: voteType === 'downvote' 
+              upvote: voteType === 'upvote' ? 1 : 0,
+              downvote: voteType === 'downvote' ? 1 : 0
             })
             .eq('id', existingVote.id);
           if (updateError) {
@@ -273,8 +273,8 @@ export default function Feed() {
             post_id: postId, 
             user_fid: user.fid, 
             creator_fid: posts.find(p => p.id === postId)?.fid,
-            upvote: voteType === 'upvote',
-            downvote: voteType === 'downvote'
+            upvote: voteType === 'upvote' ? 1 : 0,
+            downvote: voteType === 'downvote' ? 1 : 0
           });
         if (insertError) {
           console.error('Error inserting vote:', insertError);
