@@ -31,9 +31,10 @@ const BottomSlider: React.FC<BottomSliderProps> = ({ isOpen, onClose, onPost }) 
     let photoUrl = ""
     try {
       if (imageFile != null) {
+        const fileName = imageFile.name.replace(/\s+/g, '');
         const { data, error } = await supabase.storage
           .from('Images')
-          .upload(`${imageFile.name}`, imageFile);
+          .upload(`${fileName}${Date.now()}`, imageFile);
 
         if (error) {
           console.error('Error uploading file:', error);

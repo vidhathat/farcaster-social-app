@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAccount, useConnect, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useConnect, useWriteContract, useSwitchChain } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 import { contractAddress, contractABI } from "../lib/contract";
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -43,7 +43,7 @@ export default function Feed() {
   const { address, isConnected } = useAccount();
   const { connectAsync } = useConnect();
   const { writeContractAsync: addLocation } = useWriteContract();
-  const { openConnectModal } = useConnectModal();
+  const { switchChainAsync } = useSwitchChain();
 
   useEffect(() => {
     const fid = localStorage.getItem('fid')
@@ -85,6 +85,8 @@ export default function Feed() {
           return false
         }
       }
+      await switchChainAsync({ chainId: 84532 })
+
       const tx = await addLocation({
         abi: contractABI,
         address: contractAddress,
@@ -96,7 +98,8 @@ export default function Feed() {
             photoUrl,
             username,
             profilePicUrl
-        ]
+        ],
+        chainId: 84532
       })
       console.log("TRANSACTION HASH", tx)
       return true
@@ -128,7 +131,7 @@ export default function Feed() {
       const success = await handleAddLocation(location, description, photoUrl, userData.username, userData.photoUrl, fid)
       if (!success) {
         toast.error('Error with transaction')
-        return
+        throw new Error('Error with transaction')
       }
 
       const { data, error } = await supabase
