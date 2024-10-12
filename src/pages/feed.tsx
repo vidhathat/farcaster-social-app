@@ -1,69 +1,137 @@
 import Head from 'next/head'
 import FeedItem from '../components/FeedItem'
 import BottomSlider from '../components/BottomSlider'
-import { useProfile, UseSignInData } from '@farcaster/auth-kit'
+import { useProfile } from '@farcaster/auth-kit'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { supabase } from '../lib/supabase'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Define a type for our posts
+type Post = {
+  id: number
+  location: string
+  description: string
+  created_at: string
+  fid: number
+  upvotes: number
+  downvotes: number
+  photo_url: string
+  username: string
+  profilePicUrl: string
+}
 
 export default function Feed() {
-
   const router = useRouter()
   const { profile } = useProfile()
-  const [localProfile, setLocalProfile] = useState<UseSignInData | null>(null)
   const [isSliderOpen, setIsSliderOpen] = useState(false)
+  const [posts, setPosts] = useState<Post[]>([])
 
   useEffect(() => {
-    const profile = localStorage.getItem('profile')
-    if (profile) {
-      const parsedProfile = JSON.parse(profile);
-      if (parsedProfile.fid) {
-        setLocalProfile(parsedProfile);
-      } else {
-        setLocalProfile(null)
-        router.push('/')
-      }
+    const fid = localStorage.getItem('fid')
+    if (fid) {
+      fetchPosts(Number(fid))
     } else {
       router.push('/')
     }
   }, [])
 
+  const fetchPosts = async (fid: number) => {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching posts:', error)
+    } else {
+      setPosts(data)
+    }
+  }
+
+  console.log('profile', profile)
   const handleCreatePost = () => {
     setIsSliderOpen(true)
   }
 
-  const handlePost = (location: string, note: string, description: string) => {
-    // Handle the post creation logic here
-    console.log('New post:', { location, note, description })
-    // You might want to add this new post to your feed or send it to a server
+  const handlePost = async (location: string, description: string, photoUrl: string) => {
+    const fid = profile?.fid || Number(localStorage.getItem('fid'))
+    if (!fid) {
+      console.error('No FID found')
+      return
+    }
+
+    try {
+      // Fetch user information from the users table
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('username, photoUrl')
+        .eq('fid', fid)
+        .single()
+
+      if (userError) {
+        throw userError
+      }
+
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([{ 
+          location, 
+          description, 
+          fid, 
+          photo_url: photoUrl, 
+          username: userData.username, 
+          profilePicUrl: userData.photoUrl
+        }])
+
+      if (error) {
+        throw error
+      }
+
+      console.log('Post created successfully:', data)
+      await fetchPosts(fid)
+      setIsSliderOpen(false) // Close the slider after successful post
+      toast.success('Post created successfully') // Show success message
+    } catch (error) {
+      console.error('Error creating post:', error)
+      toast.error('Error creating post')
+    }
   }
 
   return (
-    <div className="container">
+    <div className="min-h-screen flex justify-center items-center p-0 sm:p-4">
       <Head>
         <title>Feed - SIXPENCE</title>
       </Head>
 
-      <main className='bg-[#181A1D] p-4 relative'>
-        <div className='flex justify-between items-center'>
-          <img src="/logo.png" alt="SIXPENCE" className=" w-28 h-6 mb-4" />
-          <img src={profile?.pfpUrl ? profile?.pfpUrl : localProfile?.pfpUrl ? localProfile?.pfpUrl : '/profile.png'} alt="Feed" className="w-8 h-8 rounded-full mb-4" />
+      <div className="w-full h-full sm:max-w-md bg-[#181A1D] sm:rounded-3xl sm:shadow-lg overflow-hidden">
+        <div className="bg-[#181A1D] p-4 h-screen sm:h-[calc(100vh-2rem)] flex flex-col">
+          <div className='flex justify-between items-center mb-4'>
+            <img src="/logo.png" alt="SIXPENCE" className="w-28 h-6" />
+            <img src={profile?.pfpUrl || '/profile.png'} alt="Profile" className="w-8 h-8 rounded-full" />
+          </div>
+          <div className='flex-grow overflow-y-auto'>
+            <div className='flex flex-col gap-4'>
+              {posts.map((post) => (
+                <FeedItem key={post.id} post={post} />
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={handleCreatePost}
+            className='fixed bottom-6 right-1/2 transform translate-x-1/2 w-14 h-14 bg-[#FF8181] text-black text-3xl shadow-xl rounded-full flex items-center justify-center'
+          >
+            +
+          </button>
         </div>
-        <div className='flex flex-col gap-4'>
-        </div>
-        <FeedItem />
-        <FeedItem />
-        <button
-          onClick={handleCreatePost}
-          className='fixed bottom-10 right-10 mx-auto w-14 h-14 bg-[#FF8181] text-black text-3xl shadow-xl rounded-full flex items-center justify-center'
-        >
-          +
-        </button>
-        <BottomSlider
-          isOpen={isSliderOpen}
-          onClose={() => setIsSliderOpen(false)}
-          onPost={handlePost}
-        />
-      </main>
+      </div>
+      <BottomSlider
+        isOpen={isSliderOpen}
+        onClose={() => setIsSliderOpen(false)}
+        onPost={handlePost}
+      />
+      <ToastContainer position="bottom-center" autoClose={3000} />
     </div>
   )
 }
