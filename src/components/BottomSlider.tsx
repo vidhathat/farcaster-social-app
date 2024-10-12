@@ -93,19 +93,13 @@ const BottomSlider: React.FC<BottomSliderProps> = ({ isOpen, onClose, onPost }) 
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           <div className="flex flex-col h-full">
-            {/* <input
-              type="text"
-              placeholder="Location of post"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="mb-4 p-2 border border-[#3F3F3F] rounded-xl py-4 px-6 bg-[#181A1D] text-white"
-            /> */}
             <AutoComplete
             apiKey={"AIzaSyDPH2FuK1mcBg72T6rFqvCghvdHagjJvEs"}
             onPlaceSelected={(place) => {
-                console.log(place);
-                setLocation(place || "");
+                console.log(place?.formatted_address);
+                setLocation(place?.formatted_address || "");
               }}
+              className="mb-4 p-2 border border-[#3F3F3F] rounded-xl py-4 px-6 bg-[#181A1D] text-white"
             />
             <textarea
               placeholder="Add description"
