@@ -3,6 +3,9 @@ import Image from 'next/image'
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/solid'
 
 const FeedItem = ({ post }) => {
+
+  console.log(post)
+
   return (
     <div className="bg-[#1B1F24]  shadow-md rounded-lg p-4 mb-4">
       <div className="flex items-center mb-2">
@@ -13,9 +16,11 @@ const FeedItem = ({ post }) => {
           height={40}
           className="rounded-full mr-2"
         />
-        <span className="font-semibold text-gray-800 dark:text-white">{post.username || 'Anonymous'}</span>
+       <div className='flex flex-col items-start justify-center'>
+          <span className="font-semibold text-gray-800 dark:text-white">{post.username || 'Anonymous'}</span>
+          <span className="text-xs mb-2 text-gray-900 dark:text-white">{post.location}</span>
+        </div>
       </div>
-      <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{post.location}</h2>
       {post.photo_url && (
         <div className="relative w-full h-48 mb-2">
           <Image src={post.photo_url} alt={post.location} layout="fill" objectFit="cover" className="rounded" />
