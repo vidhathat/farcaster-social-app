@@ -2,10 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/solid'
 
-const FeedItem = ({ post }) => {
-
-  console.log(post)
-
+const FeedItem = ({ post, onVote }) => {
   return (
     <div className="bg-[#1B1F24]  shadow-md rounded-lg p-4 mb-4">
       <div className="flex items-center mb-2">
@@ -29,11 +26,11 @@ const FeedItem = ({ post }) => {
       <p className="text-gray-600 dark:text-gray-300 mb-4">{post.description}</p>
       <div className="flex justify-between items-center">
         <div className="flex space-x-4">
-          <button className="flex items-center text-gray-500 hover:text-green-500">
+          <button className="flex items-center text-gray-500 hover:text-green-500" onClick={() => onVote('upvote')}>
             <ArrowUpIcon className="h-5 w-5 mr-1" />
             <span>{post.upvotes || 0}</span>
           </button>
-          <button className="flex items-center text-gray-500 hover:text-red-500">
+          <button className="flex items-center text-gray-500 hover:text-red-500" onClick={() => onVote('downvote')}>
             <ArrowDownIcon className="h-5 w-5 mr-1" />
             <span>{post.downvotes || 0}</span>
           </button>
