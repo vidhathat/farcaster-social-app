@@ -9,9 +9,8 @@ import { supabase } from '../lib/supabase'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAccount, useConnect, useWriteContract, useSwitchChain } from 'wagmi';
-import { injected, walletConnect } from 'wagmi/connectors';
+import { injected } from 'wagmi/connectors';
 import { contractAddress, contractABI } from "../lib/contract";
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 type Post = {
   id: number
@@ -99,14 +98,7 @@ export default function Feed() {
         // const connection = await connectAsync({ connector: injected(), chainId: 84532 })
         // depending on screen size, use either injected or walletConnect
         // if mobile use walletConnect, if desktop use injected
-        let connection;
-        if (window.innerWidth < 768) {
-          connection = await connectAsync({ connector: walletConnect({
-            projectId: "c40b9bc5d5ee0f2aaab5927e604b4598"
-          }), chainId: 84532 })
-        } else {
-          connection = await connectAsync({ connector: injected(), chainId: 84532 })
-        }
+        let connection = await connectAsync({ connector: injected(), chainId: 84532 })
         console.log(connection.accounts[0])
         if (!connection.accounts[0]) {
           return false

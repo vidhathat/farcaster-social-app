@@ -20,7 +20,7 @@ const config = {
 const rainbowConfig = getDefaultConfig({
   appName: "Sixpence",
   projectId: "c40b9bc5d5ee0f2aaab5927e604b4598",
-  chains: [baseSepolia],
+  chains: [base],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
