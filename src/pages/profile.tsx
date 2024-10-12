@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { FaMapMarkerAlt } from 'react-icons/fa'
+import { useRouter } from 'next/router'
 
 type Post = {
   id: number
@@ -26,12 +27,17 @@ export default function Profile() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [userPosts, setUserPosts] = useState<Post[]>([])
 
+  const router = useRouter()
+
   useEffect(() => {
     const storedProfile = localStorage.getItem('user')
     if (storedProfile) {
       const parsedProfile = JSON.parse(storedProfile)
       setUserProfile(parsedProfile)
       fetchUserPosts(parsedProfile.fid)
+    } else {
+      localStorage.clear()
+      router.push('/')
     }
   }, [])
 
