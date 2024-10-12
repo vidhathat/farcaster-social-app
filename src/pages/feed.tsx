@@ -95,16 +95,10 @@ export default function Feed() {
   const handleAddLocation = async (location: string, description: string, photoUrl: string, username: string, profilePicUrl: string, fid: number) => {
     try {
       if(!isConnected) {
-        // const connection = await connectAsync({ connector: injected(), chainId: 84532 })
-        // depending on screen size, use either injected or walletConnect
-        // if mobile use walletConnect, if desktop use injected
-        let connection = await connectAsync({ connector: injected(), chainId: 84532 })
-        console.log(connection.accounts[0])
-        if (!connection.accounts[0]) {
-          return false
-        }
+        toast.error('Please connect your wallet to post')
+        throw new Error('Not connected')
       }
-      await switchChainAsync({ chainId: 84532 })
+      await switchChainAsync({ chainId: 8453 })
 
       const tx = await addLocation({
         abi: contractABI,
@@ -146,12 +140,6 @@ export default function Feed() {
         throw userError
       }
 
-      const success = await handleAddLocation(location, description, photoUrl, userData.username, userData.photoUrl, user.fid)
-      if (!success) {
-        toast.error('Error with transaction')
-        throw new Error('Error with transaction')
-      }
-
       const { data, error } = await supabase
         .from('posts')
         .insert([{ 
@@ -169,6 +157,11 @@ export default function Feed() {
 
       console.log('Post created successfully:', data)
       await fetchPosts(user.fid)
+      const success = await handleAddLocation(location, description, photoUrl, userData.username, userData.photoUrl, user.fid)
+      if (!success) {
+        toast.error('Error with transaction')
+        throw new Error('Error with transaction')
+      }
       setIsSliderOpen(false) // Close the slider after successful post
       toast.success('Post created successfully') // Show success message
     } catch (error) {
