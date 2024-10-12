@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import AutoComplete from "react-google-autocomplete";
 
 interface BottomSliderProps {
   isOpen: boolean;
@@ -6,10 +7,14 @@ interface BottomSliderProps {
   onPost: (location: string, note: string, description: string) => void;
 }
 
-const BottomSlider: React.FC<BottomSliderProps> = ({ isOpen, onClose, onPost }) => {
-  const [location, setLocation] = useState('');
-  const [note, setNote] = useState('');
-  const [description, setDescription] = useState('');
+const BottomSlider: React.FC<BottomSliderProps> = ({
+  isOpen,
+  onClose,
+  onPost,
+}) => {
+  const [location, setLocation] = useState("");
+  const [note, setNote] = useState("");
+  const [description, setDescription] = useState("");
 
   const handlePost = () => {
     onPost(location, note, description);
@@ -20,21 +25,25 @@ const BottomSlider: React.FC<BottomSliderProps> = ({ isOpen, onClose, onPost }) 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50">
-      <div 
-        className="absolute inset-0"
-        onClick={onClose}
-      />
-      <div 
+      <div className="absolute inset-0" onClick={onClose} />
+      <div
         className="absolute bottom-0 left-0 right-0 bg-[#181A1D] rounded-t-3xl p-6"
-        style={{ height: '60%' }}
+        style={{ height: "60%" }}
       >
         <div className="flex flex-col h-full">
-          <input
+          {/* <input
             type="text"
             placeholder="Location of post"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className="mb-4 p-2 border border-[#3F3F3F] rounded-xl py-4 px-6 bg-[#181A1D]"
+          /> */}
+          <AutoComplete
+            apiKey={"AIzaSyDPH2FuK1mcBg72T6rFqvCghvdHagjJvEs"}
+            onPlaceSelected={(place) => {
+              console.log(place);
+              setLocation(place || "");
+            }}
           />
           <input
             type="text"
