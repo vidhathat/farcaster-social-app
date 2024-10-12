@@ -233,6 +233,7 @@ export default function Feed() {
       console.log(`Existing vote:`, existingVote);
 
       if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error fetching existing vote:', fetchError);
         throw fetchError;
       }
 
@@ -240,33 +241,45 @@ export default function Feed() {
         if (existingVote.upvote === (voteType === 'upvote') && existingVote.downvote === (voteType === 'downvote')) {
           console.log(`Removing vote for post ${postId}`);
           // Remove the vote if it's the same type
-          await supabase
+          const { error: deleteError } = await supabase
             .from('votes')
             .delete()
             .eq('id', existingVote.id);
+          if (deleteError) {
+            console.error('Error deleting vote:', deleteError);
+            throw deleteError;
+          }
         } else {
           console.log(`Updating vote for post ${postId}`);
           // Update the vote type if it's different
-          await supabase
+          const { error: updateError } = await supabase
             .from('votes')
             .update({ 
               upvote: voteType === 'upvote', 
               downvote: voteType === 'downvote' 
             })
             .eq('id', existingVote.id);
+          if (updateError) {
+            console.error('Error updating vote:', updateError);
+            throw updateError;
+          }
         }
       } else {
         console.log(`Inserting new vote for post ${postId}`);
         // Insert a new vote
-        await supabase
+        const { error: insertError } = await supabase
           .from('votes')
           .insert({ 
             post_id: postId, 
             user_fid: user.fid, 
-            creator_id: posts.find(p => p.id === postId)?.fid,
+            creator_fid: posts.find(p => p.id === postId)?.fid,
             upvote: voteType === 'upvote',
             downvote: voteType === 'downvote'
           });
+        if (insertError) {
+          console.error('Error inserting vote:', insertError);
+          throw insertError;
+        }
       }
 
       console.log(`Fetching updated post ${postId}`);
