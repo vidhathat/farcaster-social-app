@@ -112,7 +112,7 @@ export default function Feed() {
             username,
             profilePicUrl
         ],
-        chainId: 84532
+        chainId: 8453
       })
       console.log("TRANSACTION HASH", tx)
       return true

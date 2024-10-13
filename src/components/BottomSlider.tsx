@@ -111,7 +111,7 @@ const BottomSlider: React.FC<BottomSliderProps> = ({ isOpen, onClose, onPost }) 
               }}
               apiKey={"AIzaSyDPH2FuK1mcBg72T6rFqvCghvdHagjJvEs"}
               onPlaceSelected={(place) => {
-                console.log(place?.formatted_address);
+                console.log(place);
                 setLocation(place?.formatted_address || "");
               }}
               className="mb-4 p-2 border border-[#3F3F3F] rounded-xl py-4 px-6 bg-[#181A1D] text-white"
