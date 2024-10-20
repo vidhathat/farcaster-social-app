@@ -4,7 +4,7 @@ export default function Post() {
   return (
     <div className="container">
       <Head>
-        <title>New Post - SIXPENCE</title>
+        <title>New Post - ShareSpot</title>
       </Head>
 
       <main>

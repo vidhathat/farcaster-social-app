@@ -317,13 +317,13 @@ export default function Feed() {
   return (
     <div className="min-h-screen flex justify-center items-center p-0 sm:p-4">
       <Head>
-        <title>Feed - SIXPENCE</title>
+        <title>Feed - ShareSpot</title>
       </Head>
 
       <div className="w-full h-full sm:max-w-md bg-[#181A1D] sm:rounded-3xl sm:shadow-lg overflow-hidden">
         <div className="bg-[#181A1D] p-4 h-screen sm:h-[calc(100vh-2rem)] flex flex-col">
           <div className='flex justify-between items-center mb-4'>
-            <img src="/logo.png" alt="SIXPENCE" className="w-28 h-6" />
+            <img src="/logo.png" alt="ShareSpot" className="w-28 h-6" />
             <Link href="/profile">
               <img src={user?.photoUrl || '/profile.png'} alt="Profile" className="w-8 h-8 rounded-full cursor-pointer" />
             </Link>
