@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAccount, useConnect, useWriteContract, useSwitchChain } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 import { contractAddress, contractABI } from "../lib/contract";
-
+import Image from 'next/image';
 type Post = {
   id: number
   location: string
@@ -323,7 +323,12 @@ export default function Feed() {
       <div className="w-full h-full sm:max-w-md bg-[#181A1D] sm:rounded-3xl sm:shadow-lg overflow-hidden">
         <div className="bg-[#181A1D] p-4 h-screen sm:h-[calc(100vh-2rem)] flex flex-col">
           <div className='flex justify-between items-center mb-4'>
-            <img src="/logo.png" alt="ShareSpot" className="w-28 h-6" />
+            <Image
+          src="/ShareSpot.svg"
+          alt="ShareSpot Logo"
+          width={141}
+          height={20}
+          />
             <Link href="/profile">
               <img src={user?.photoUrl || '/profile.png'} alt="Profile" className="w-8 h-8 rounded-full cursor-pointer" />
             </Link>

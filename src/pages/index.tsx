@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { SignInButton, UseSignInData } from "@farcaster/auth-kit";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -61,7 +62,13 @@ export default function Home() {
           <img src="/login.png" alt="ShareSpot" className="w-full  mx-auto" />
         </div>
         <div className="absolute top-[65%] md:top-[70%] bottom-0 left-0 right-0 bg-[#181A1D] rounded-t-[40px] flex flex-col justify-center items-center p-6">
-          <h1 className="text-3xl font-bold mb-4 text-white">ShareSpot</h1>
+          <Image
+          src="/ShareSpot.svg"
+          alt="ShareSpot Logo"
+          width={141}
+          height={20}
+          className="mb-4"
+          />
           <p className="mb-8 text-gray-300">
             Discover what your Farcaster friends are buying & get rewarded for
             sharing it.
